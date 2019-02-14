@@ -1,0 +1,25 @@
+{
+  "name": "easycalbot-telegram",
+  "version": "1.0.0",
+  "description": "Calendar bot for telegram",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ashakirzianov/easycalbot-telegram.git"
+  },
+  "keywords": [
+    "telegram",
+    "bot",
+    "easycalbot",
+    "calendar"
+  ],
+  "author": "Anton Shakirizianov",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ashakirzianov/easycalbot-telegram/issues"
+  },
+  "homepage": "https://github.com/ashakirzianov/easycalbot-telegram#readme"
+}
