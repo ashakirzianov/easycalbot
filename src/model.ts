@@ -4,11 +4,7 @@ export type Time = {
 };
 
 export type Year = number;
-export type Month =
-    |'January' | 'February' | 'March' | 'April'
-    | 'May' | 'June' | 'July' | 'August'
-    | 'September' | 'October' | 'November' | 'December'
-    ;
+export type Month = number;
 export type Day = number;
 export type PartialDate = {
     year?: Year,
@@ -31,17 +27,22 @@ export type Record = {
     remindAt: AbsoluteDate,
 };
 
-export const months: Month[] = [
+export type StringMonth =
+    |'January' | 'February' | 'March' | 'April'
+    | 'May' | 'June' | 'July' | 'August'
+    | 'September' | 'October' | 'November' | 'December'
+    ;
+export const months: StringMonth[] = [
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December',
 ];
-export function numToMonth(n: number): Month | undefined {
+export function numToMonth(n: number): StringMonth | undefined {
     return n > 0 && n <= months.length
         ? months[n-1]
         : undefined;
 }
 
-export function monthToNum(month: Month): number | undefined {
+export function monthToNum(month: StringMonth): number | undefined {
     const idx = months.findIndex(m => m === month);
     return idx >= 0 ? idx + 1 : undefined;
 }
@@ -49,8 +50,7 @@ export function monthToNum(month: Month): number | undefined {
 export function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
     const now = new Date(Date.now());
     const year = relative.year || now.getFullYear();
-    const month1to12 = relative.month && monthToNum(relative.month);
-    const month = (month1to12 && month1to12 - 1) || now.getMonth();
+    const month = relative.month || now.getMonth();
     const day = relative.day || now.getDay();
 
     const date = new Date(year, month, day);

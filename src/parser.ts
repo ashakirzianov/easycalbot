@@ -23,18 +23,18 @@ function monthParser(month: Month, key: keyof Locale) {
 }
 
 
-const january = monthParser('January', 'jan');
-const february = monthParser('February', 'feb');
-const march = monthParser('March', 'mar');
-const april = monthParser('April', 'apr');
-const may = monthParser('May', 'may');
-const june = monthParser('June', 'jun');
-const july = monthParser('July', 'jul');
-const august = monthParser('August', 'aug');
-const september = monthParser('September', 'sep');
-const october = monthParser('October', 'oct');
-const november = monthParser('November', 'nov');
-const december = monthParser('December', 'dec');
+const january = monthParser(0, 'jan');
+const february = monthParser(1, 'feb');
+const march = monthParser(2, 'mar');
+const april = monthParser(3, 'apr');
+const may = monthParser(4, 'may');
+const june = monthParser(5, 'jun');
+const july = monthParser(6, 'jul');
+const august = monthParser(7, 'aug');
+const september = monthParser(8, 'sep');
+const october = monthParser(9, 'oct');
+const november = monthParser(10, 'nov');
+const december = monthParser(11, 'dec');
 
 const month: Parser<Month> = choice(
     january, february, march, april, may, june,
@@ -65,7 +65,10 @@ const stringDate: DateParser = translate(
     }),
 );
 
-const numMonth = ifDefined(translate(decimal, numToMonth));
+const numMonth = translate(
+    iff(decimal, d => d > 0 && d <= 12),
+    m => m - 1,
+);
 
 const americanDate: DateParser = translate(
     seq(trimS(numMonth), tslash, tday, tslash, tyear),
