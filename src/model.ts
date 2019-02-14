@@ -3,10 +3,17 @@ export type Time = {
     minutes: number,
 };
 
+export type Year = number;
+export type Month =
+    |'January' | 'February' | 'March' | 'April'
+    | 'May' | 'June' | 'July' | 'August'
+    | 'September' | 'October' | 'November' | 'December'
+    ;
+export type Day = number;
 export type PartialDate = {
-    year?: number,
-    month?: number,
-    day?: number,
+    year?: Year,
+    month?: Month,
+    day?: Day,
     time?: Time,
 };
 export type RelativeDate = PartialDate;
@@ -23,3 +30,8 @@ export type Record = {
     date: AbsoluteDate,
     remindAt: AbsoluteDate,
 };
+
+export const months: Month[] = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December',
+];

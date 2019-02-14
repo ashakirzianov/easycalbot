@@ -34,7 +34,8 @@ export function not(parser: Parser<any>): Parser<{}> {
 export function and<T1, T2>(p1: Parser<T1>, p2: Parser<T2>): Parser<[T1, T2]>;
 export function and<T1, T2, T3>(p1: Parser<T1>, p2: Parser<T2>, p3: Parser<T3>): Parser<[T1, T2, T3]>;
 export function and<T1, T2, T3, T4>(p1: Parser<T1>, p2: Parser<T2>, p3: Parser<T3>, p4: Parser<T4>): Parser<[T1, T2, T3, T4]>;
-export function and<T>(...ps: Array<Parser<any>>): Parser<any[]> {
+export function and<T>(...ps: Array<Parser<T>>): Parser<T[]>;
+export function and(...ps: Array<Parser<any>>): Parser<any[]> {
     return input => {
         const results: any[] = [];
         let lastInput = input;
@@ -54,7 +55,10 @@ export function and<T>(...ps: Array<Parser<any>>): Parser<any[]> {
 export function seq<T1, T2>(p1: Parser<T1>, p2: Parser<T2>): Parser<[T1, T2]>;
 export function seq<T1, T2, T3>(p1: Parser<T1>, p2: Parser<T2>, p3: Parser<T3>): Parser<[T1, T2, T3]>;
 export function seq<T1, T2, T3, T4>(p1: Parser<T1>, p2: Parser<T2>, p3: Parser<T3>, p4: Parser<T4>): Parser<[T1, T2, T3, T4]>;
-export function seq<TI>(...ps: Array<Parser<any>>): Parser<any[]> {
+
+export function seq<T1, T2, T3, T4, T5>(p1: Parser<T1>, p2: Parser<T2>, p3: Parser<T3>, p4: Parser<T4>, p5: Parser<T5>): Parser<[T1, T2, T3, T4, T5]>;
+export function seq<T>(...ps: Array<Parser<T>>): Parser<T>;
+export function seq(...ps: Array<Parser<any>>): Parser<any[]> {
     return input => {
         let currentInput = input;
         const results: any[] = [];
@@ -76,7 +80,8 @@ export function choice<T1, T2, T3>(p1: Parser<T1>, p2: Parser<T2>, p3: Parser<T3
 export function choice<T1, T2, T3, T4>(
     p1: Parser<T1>, p2: Parser<T2>, p3: Parser<T3>, p4: Parser<T4>
 ): Parser<T1 | T2 | T3 | T4>;
-export function choice<TI>(...ps: Array<Parser<any>>): Parser<any[]> {
+export function choice<T>(...ps: Array<Parser<T>>): Parser<T>;
+export function choice(...ps: Array<Parser<any>>): Parser<any> {
     return input => {
         const failReasons: FailReason[] = [];
         for (let i = 0; i < ps.length; i++) {
@@ -93,8 +98,25 @@ export function choice<TI>(...ps: Array<Parser<any>>): Parser<any[]> {
 
 export function projectLast<T1, T2>(parser: Parser<[T1, T2]>): Parser<T2>;
 export function projectLast<T1, T2, T3>(parser: Parser<[T1, T2, T3]>): Parser<T3>;
-export function projectLast<TI>(parser: Parser<any>): Parser<any> {
+export function projectLast<T>(parser: Parser<T[]>): Parser<T>;
+export function projectLast(parser: Parser<any>): Parser<any> {
     return translate(parser, result => result[result.length - 1]);
+}
+
+export function projectFirst<T1, T2>(parser: Parser<[T1, T2]>): Parser<T1>;
+export function projectFirst<T1, T2, T3>(parser: Parser<[T1, T2, T3]>): Parser<T1>;
+export function projectFirst<T>(parser: Parser<T[]>): Parser<T>;
+export function projectFirst(parser: Parser<any>): Parser<any> {
+    return translate(parser, result => result[0]);
+}
+
+export function maybe<T>(parser: Parser<T>): Parser<T | undefined> {
+    return input => {
+        const result = parser(input);
+        return result.success
+            ? result
+            : success(undefined, input);
+    };
 }
 
 export function some<T>(parser: Parser<T>): Parser<T[]> {
@@ -150,14 +172,28 @@ export function skipTo<TO>(parser: Parser<TO>): Parser<TO> {
     ));
 }
 
-function bite(str: string, length: number) {
-    return str.substring(length);
+export function iff<T>(parser: Parser<T>, predicate: (o: T) => boolean): Parser<T> {
+    return input => {
+        const result = parser(input);
+        if (result.success) {
+            return predicate(result.value)
+                ? result
+                : fail(`Value doesn't meat the condition: ${result.value}`);
+        } else {
+            return result;
+        }
+    }
 }
 
-export function prefix(pre: string): Parser<string> {
-    return input => input.toLocaleLowerCase().startsWith(pre.toLocaleLowerCase())
-        ? success(pre, input.substring(pre.length))
-        : fail(`${input} does not start with ${pre}`)
+export function ifDefined<T>(parser: Parser<T | undefined>): Parser<T> {
+    return iff(parser, x => x !== undefined) as Parser<T>;
+}
+
+export function prefix(pref: string): Parser<string> {
+    const lowerPref = pref.toLocaleLowerCase();
+    return input => input.toLocaleLowerCase().startsWith(lowerPref)
+        ? success(lowerPref, input.substring(lowerPref.length))
+        : fail(`${input} does not start with ${lowerPref}`)
         ;
 }
 
@@ -171,4 +207,30 @@ export function regex(re: RegExp): Parser<string> {
             : fail(`${input} does not match ${re}`)
             ;
     };
+}
+
+export function prefixes(...ps: string[]): Parser<string> {
+    const parsers = ps.map(prefix);
+    return choice(...parsers);
+}
+
+export const decimal: Parser<number> = translate(regex(/\d+/), s => parseInt(s));
+export const whitespaces = regex(/\s+/);
+export function trimS<T>(parser: Parser<T>): Parser<T> {
+    return projectLast(seq(maybe(whitespaces), parser));
+}
+
+export function trimE<T>(parser: Parser<T>): Parser<T> {
+    return projectFirst(seq(parser, maybe(whitespaces)));
+}
+
+export function trim<T>(parser: Parser<T>): Parser<T> {
+    return translate(
+        seq(maybe(whitespaces), parser, maybe(whitespaces)),
+        ([_, r, __]) => r,
+    );
+}
+
+export function anything(input: string): Result<string> {
+    return success(input, '');
 }
