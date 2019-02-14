@@ -22,29 +22,35 @@ export type ParsedRecord = {
 };
 
 export type Record = {
-    id: number,
     date: AbsoluteDate,
     remindAt: AbsoluteDate,
 };
 
-export type StringMonth =
-    |'January' | 'February' | 'March' | 'April'
-    | 'May' | 'June' | 'July' | 'August'
-    | 'September' | 'October' | 'November' | 'December'
-    ;
-export const months: StringMonth[] = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December',
-];
-export function numToMonth(n: number): StringMonth | undefined {
-    return n > 0 && n <= months.length
-        ? months[n-1]
-        : undefined;
+export type UserRecordId = number;
+export type UserRecord = {
+    id: UserRecordId,
+    record: Record,
+};
+
+export type UserInfo = {
+    records: UserRecord[],
+};
+
+export function nextId(user: UserInfo): UserRecordId {
+    const maxId = user.records
+        .reduce((max, rec) => max < rec.id ? rec.id : max, 0);
+    return maxId + 1;
 }
 
-export function monthToNum(month: StringMonth): number | undefined {
-    const idx = months.findIndex(m => m === month);
-    return idx >= 0 ? idx + 1 : undefined;
+export function addRecord(user: UserInfo, record: Record): UserInfo {
+    const userRecord = {
+        id: nextId(user),
+        record: record,
+    };
+
+    return {
+        records: user.records.concat(userRecord),
+    };
 }
 
 export function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
@@ -57,3 +63,21 @@ export function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
 
     return date;
 }
+
+export function parsedRecordToRecord(parsed: ParsedRecord): Record {
+    const date = relativeToAbsolute(parsed.date);
+    return {
+        date: date,
+        remindAt: date,
+    };
+}
+
+export type CreateRecordCommand = {
+    command: 'create-record',
+    record: Record,
+};
+export type CannotParseCommand = {
+    command: 'cant-parse',
+    text: string,
+};
+export type BotCommand = CreateRecordCommand | CannotParseCommand;

@@ -37,3 +37,10 @@ export type LocaleSelector = (l: Locale) => Locale[keyof Locale];
 export function localeSelector(key: keyof Locale) {
     return (l: Locale) => l[key];
 }
+
+export function months(l: Locale): string[] {
+    return [
+        l.jan[0], l.feb[0], l.mar[0], l.apr[0], l.may[0], l.jun[0],
+        l.jul[0], l.aug[0], l.sep[0], l.oct[0], l.nov[0], l.dec[0],
+    ];
+}

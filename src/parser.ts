@@ -4,7 +4,7 @@ import {
 } from "./parserCombinators";
 import { mapAndConcat } from "./utils";
 import { locales, localeSelector, Locale } from "./locale";
-import { Month, Year, Day, months, RelativeDate, ParsedRecord, numToMonth } from "./model";
+import { Month, Year, Day, RelativeDate, ParsedRecord, CreateRecordCommand, parsedRecordToRecord, BotCommand } from "./model";
 
 // Year
 const yearDec = decimal;
@@ -90,15 +90,27 @@ const euroDate: DateParser = translate(
 
 const date: DateParser = choice(euroDate, americanDate, stringDate);
 
-// Full
+// Record
 
 const separator = trim(prefixes('-', '--', '—', ':'));
 const message = anything;
 
-const recordParser: Parser<ParsedRecord> = translate(
+const record: Parser<ParsedRecord> = translate(
     seq(date, maybe(separator), message),
     ([d, s, m]) => ({
         date: d,
         text: m,
     }),
 );
+
+// Command
+
+const createRecord: Parser<CreateRecordCommand> = translate(
+    record,
+    r => ({
+        command: 'create-record' as 'create-record',
+        record: parsedRecordToRecord(r),
+    }),
+);
+
+export const commandParser: Parser<BotCommand> = createRecord;
