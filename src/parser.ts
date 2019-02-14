@@ -4,7 +4,7 @@ import {
 } from "./parserCombinators";
 import { mapAndConcat } from "./utils";
 import { locales, localeSelector, Locale } from "./locale";
-import { Month, Year, Day, months, RelativeDate, ParsedRecord } from "./model";
+import { Month, Year, Day, months, RelativeDate, ParsedRecord, numToMonth } from "./model";
 
 // Year
 const yearDec = decimal;
@@ -66,11 +66,6 @@ const stringDate: DateParser = translate(
 );
 
 const numMonth = ifDefined(translate(decimal, numToMonth));
-function numToMonth(n: number): Month | undefined {
-    return n > 0 && n <= months.length
-        ? months[n-1]
-        : undefined;
-}
 
 const americanDate: DateParser = translate(
     seq(trimS(numMonth), tslash, tday, tslash, tyear),
