@@ -17,11 +17,12 @@ export type AbsoluteDate = Date;
 
 export type ParsedRecord = {
     date: RelativeDate,
-    text: string,
+    reminder: string,
     before?: Time,
 };
 
 export type Record = {
+    reminder: string,
     date: AbsoluteDate,
     remindAt: AbsoluteDate,
 };
@@ -67,6 +68,7 @@ export function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
 export function parsedRecordToRecord(parsed: ParsedRecord): Record {
     const date = relativeToAbsolute(parsed.date);
     return {
+        reminder: parsed.reminder,
         date: date,
         remindAt: date,
     };

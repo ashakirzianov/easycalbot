@@ -99,7 +99,7 @@ const record: Parser<ParsedRecord> = translate(
     seq(date, maybe(separator), message),
     ([d, s, m]) => ({
         date: d,
-        text: m,
+        reminder: m,
     }),
 );
 

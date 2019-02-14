@@ -1,5 +1,5 @@
 import { months, Locale } from "./locale";
-import { Month, BotCommand } from "./model";
+import { Month, BotCommand, Record } from "./model";
 import { commandParser } from "./parser";
 
 export function monthToLocale(l: Locale, m: Month): string {
@@ -18,4 +18,20 @@ export function parseCommand(text: string): BotCommand {
             command: 'cant-parse' as 'cant-parse',
             text: text,
         };
+}
+
+export function messageToReply(message: string): string {
+    const command = parseCommand(message);
+
+    switch (command.command) {
+        case 'create-record':
+            return recordToString(command.record);
+        case 'cant-parse':
+        default:
+            return "I didn't get it";
+    }
+}
+
+export function recordToString(record: Record): string {
+    return `${record.date.toDateString()}\n${record.reminder}`;
 }
