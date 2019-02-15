@@ -23,3 +23,19 @@ it('Parse string record correctly', () => {
     expect(result.date.day).toBe(14);
     expect(result.reminder).toBe('I\'m 30!');
 });
+
+it('Parse euro date record correctly', () => {
+    const result = parseExpectSuccess(parsers.record, '14.12.2019- I\'m 30!').value;
+    expect(result.date.year).toBe(2019);
+    expect(result.date.month).toBe(11);
+    expect(result.date.day).toBe(14);
+    expect(result.reminder).toBe('I\'m 30!');
+});
+
+it('Parse american date record correctly', () => {
+    const result = parseExpectSuccess(parsers.record, '12/14/2019- I\'m 30!').value;
+    expect(result.date.year).toBe(2019);
+    expect(result.date.month).toBe(11);
+    expect(result.date.day).toBe(14);
+    expect(result.reminder).toBe('I\'m 30!');
+});
