@@ -32,6 +32,10 @@ function relativeToAbsolute(relative: RelativeDate, now: AbsoluteDate): Absolute
             return inNDays(1, now);
         case 'weekday':
             return nextWeekday(relative.day, now);
+        case 'in':
+            return relative.in.time
+                ? now.add(relative.in.time.hours, 'h').add(relative.in.time.minutes, 'm')
+                : now;
         default:
             throw new Error('Unsupported date');
     }
