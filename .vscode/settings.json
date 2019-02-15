@@ -1,0 +1,18 @@
+{
+    "tslint.autoFixOnSave": true,
+    "editor.formatOnSave": true,
+    "cSpell.words": [
+        "Combinators",
+        "Shakirizianov",
+        "Truthy",
+        "easycalbot",
+        "tcomma",
+        "tday",
+        "tdot",
+        "telegraf",
+        "tmonth",
+        "tslash",
+        "tyear",
+        "whitespaces"
+    ]
+}
