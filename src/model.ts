@@ -19,9 +19,10 @@ export type PartialDate = {
 export type WeekDayDate = {
     date: 'weekday',
     day: Weekday,
+    time?: Time,
 };
-export type TodayDate = { date: 'today' };
-export type TomorrowDate = { date: 'tomorrow' };
+export type TodayDate = { date: 'today', time?: Time };
+export type TomorrowDate = { date: 'tomorrow', time?: Time };
 export type InPartialDate = {
     date: 'in',
     in: PartialDate,
