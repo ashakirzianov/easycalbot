@@ -1,27 +1,26 @@
 import {
     prefixes, translate, Parser, choice, iff,
     decimal, seq, prefix, projectLast, maybe, trimS, ifDefined, trim, anything,
-} from "./parserCombinators";
-import { mapAndConcat } from "./utils";
-import { locales, localeSelector, Locale } from "./locale";
-import { Month, Year, Day, RelativeDate, ParsedRecord, CreateRecordCommand, parsedRecordToRecord, BotCommand } from "./model";
+} from './parserCombinators';
+import { mapAndConcat } from './utils';
+import { locales, localeSelector, Locale } from './locale';
+import { Month, Year, Day, RelativeDate, ParsedRecord, CreateRecordCommand, parsedRecordToRecord, BotCommand } from './model';
 
 // Year
 const yearDec = decimal;
-const yearWithApostrophe = projectLast(seq(prefix("'"), decimal));
+const yearWithApostrophe = projectLast(seq(prefix('\''), decimal));
 
 const year: Parser<Year> = choice(yearDec, yearWithApostrophe);
 const tyear = trimS(year);
 
 // Month
 
-function monthParser(month: Month, key: keyof Locale) {
+function monthParser(m: Month, key: keyof Locale) {
     return translate(
         prefixes(...mapAndConcat(locales, localeSelector(key))),
-        () => month,
+        () => m,
     );
 }
-
 
 const january = monthParser(0, 'jan');
 const february = monthParser(1, 'feb');

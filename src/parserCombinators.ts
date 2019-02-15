@@ -182,7 +182,7 @@ export function iff<T>(parser: Parser<T>, predicate: (o: T) => boolean): Parser<
         } else {
             return result;
         }
-    }
+    };
 }
 
 export function ifDefined<T>(parser: Parser<T | undefined>): Parser<T> {
@@ -214,7 +214,7 @@ export function prefixes(...ps: string[]): Parser<string> {
     return choice(...parsers);
 }
 
-export const decimal: Parser<number> = translate(regex(/\d+/), s => parseInt(s));
+export const decimal: Parser<number> = translate(regex(/\d+/), s => parseInt(s, 10));
 export const whitespaces = regex(/\s+/);
 export function trimS<T>(parser: Parser<T>): Parser<T> {
     return projectLast(seq(maybe(whitespaces), parser));

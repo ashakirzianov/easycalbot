@@ -1,6 +1,6 @@
-import { months, Locale } from "./locale";
-import { Month, BotCommand, Record } from "./model";
-import { commandParser } from "./parser";
+import { months, Locale } from './locale';
+import { Month, BotCommand, Record } from './model';
+import { commandParser } from './parser';
 
 export function monthToLocale(l: Locale, m: Month): string {
     const ms = months(l);
