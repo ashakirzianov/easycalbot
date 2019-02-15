@@ -171,6 +171,34 @@ const time: Parser<PartialDate> = translate(
     ([_, t]) => t,
 );
 
+// In X
+
+const inn = localePrefixes('in');
+const minutes = localePrefixes('minute');
+const hours = localePrefixes('hour');
+
+const inMinutes: DateParser = translate(
+    seq(trimS(inn), trimS(decimal), trimS(minutes)),
+    ([_, n, __]) => ({
+        date: 'in' as 'in',
+        in: {
+            date: 'partial' as 'partial',
+            time: { hours: 0, minutes: n },
+        },
+    })
+);
+
+const inHours: DateParser = translate(
+    seq(trimS(inn), trimS(decimal), trimS(hours)),
+    ([_, n, __]) => ({
+        date: 'in' as 'in',
+        in: {
+            date: 'partial' as 'partial',
+            time: { hours: n, minutes: 0 },
+        },
+    })
+);
+
 // Full Date Time
 
 const fullDateTime = translate(
@@ -182,7 +210,7 @@ const fullDateTime = translate(
 );
 
 const dateTimeParser = choice(
-    fullDateTime, relativeDate, time,
+    fullDateTime, relativeDate, time, inMinutes, inHours,
 );
 
 // Record
