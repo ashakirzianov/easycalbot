@@ -37,23 +37,6 @@ export type UserInfo = {
     records: UserRecord[],
 };
 
-export function nextId(user: UserInfo): UserRecordId {
-    const maxId = user.records
-        .reduce((max, rec) => max < rec.id ? rec.id : max, 0);
-    return maxId + 1;
-}
-
-export function addRecord(user: UserInfo, record: Record): UserInfo {
-    const userRecord = {
-        id: nextId(user),
-        record: record,
-    };
-
-    return {
-        records: user.records.concat(userRecord),
-    };
-}
-
 export function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
     const now = new Date(Date.now());
     const year = relative.year || now.getFullYear();
@@ -83,3 +66,8 @@ export type CannotParseCommand = {
     text: string,
 };
 export type BotCommand = CreateRecordCommand | CannotParseCommand;
+
+export type ExecuteResult = {
+    reply: string,
+    user: UserInfo,
+};
