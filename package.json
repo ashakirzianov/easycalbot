@@ -7,8 +7,7 @@
     "start": "node dist/index.js",
     "build": "tsc",
     "lint": "tslint -c tslint.json -p tsconfig.json",
-    "test": "jest --watch --config jest.config.json",
-    "heroku-postbuild": "echo Skip build on Heroku"
+    "test": "jest --watch --config jest.config.json"
   },
   "repository": {
     "type": "git",
