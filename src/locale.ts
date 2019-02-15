@@ -11,6 +11,19 @@ export type Locale = {
     oct: string[],
     nov: string[],
     dec: string[],
+    today: string[],
+    tomorrow: string[],
+    monday: string[],
+    tuesday: string[],
+    wednesday: string[],
+    thursday: string[],
+    friday: string[],
+    saturday: string[],
+    sunday: string[],
+    in: string[],
+    minute: string[],
+    hour: string[],
+    day: string[],
 };
 
 const en: Locale = {
@@ -26,6 +39,19 @@ const en: Locale = {
     oct: ['october', 'oct'],
     nov: ['november', 'nov'],
     dec: ['december', 'dec'],
+    today: ['today'],
+    tomorrow: ['tomorrow'],
+    monday: ['monday'],
+    tuesday: ['tuesday'],
+    wednesday: ['wednesday'],
+    thursday: ['thursday'],
+    friday: ['friday'],
+    saturday: ['saturday'],
+    sunday: ['sunday'],
+    in: ['in an', 'in a', 'in'],
+    minute: ['minutes', 'minute'],
+    hour: ['hours', 'hour'],
+    day: ['day', 'days'],
 };
 
 export const locales: Locale[] = [
