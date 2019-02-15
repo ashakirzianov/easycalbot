@@ -66,5 +66,5 @@ export function parseAndExec(input: string, ctx: CommandContext): ExecuteResult 
 }
 
 function userRecordToString(record: UserRecord): string {
-    return `#${record.id} ${record.record.date.toDateString()}:\n${record.record.reminder}`;
+    return `#${record.id} ${record.record.date.format('ddd MMMM Do YYYY')}:\n${record.record.reminder}`;
 }

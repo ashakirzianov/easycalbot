@@ -1,3 +1,5 @@
+import { Moment } from 'moment';
+
 export type Time = {
     hours: number,
     minutes: number,
@@ -28,7 +30,7 @@ export type RelativeDate =
     | PartialDate | InPartialDate
     | WeekDayDate | TomorrowDate | TodayDate
     ;
-export type AbsoluteDate = Date;
+export type AbsoluteDate = Moment;
 
 export type ParsedRecord = {
     date: RelativeDate,
@@ -66,7 +68,7 @@ export type BotCommand = CreateRecordCommand | CannotParseCommand;
 
 export type CommandContext = {
     user: UserInfo,
-    now: Date,
+    now: AbsoluteDate,
 };
 
 export type ExecuteResult = {
