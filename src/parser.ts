@@ -4,7 +4,10 @@ import {
 } from './parserCombinators';
 import { mapAndConcat } from './utils';
 import { locales, localeSelector, Locale } from './locale';
-import { Month, Year, Day, RelativeDate, ParsedRecord, CreateRecordCommand, parsedRecordToRecord, BotCommand } from './model';
+import {
+    Month, Year, Day, RelativeDate, ParsedRecord,
+    CreateRecordCommand, BotCommand, AbsoluteDate, Record,
+} from './model';
 
 // Year
 const yearDec = translate(
@@ -119,3 +122,21 @@ export const createRecord: Parser<CreateRecordCommand> = translate(
 );
 
 export const commandParser: Parser<BotCommand> = createRecord;
+
+function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
+    const now = new Date(Date.now());
+    const y = relative.year || now.getFullYear();
+    const m = relative.month || now.getMonth();
+    const d = relative.day || now.getDay();
+
+    return new Date(y, m, d);
+}
+
+function parsedRecordToRecord(parsed: ParsedRecord): Record {
+    const d = relativeToAbsolute(parsed.date);
+    return {
+        reminder: parsed.reminder,
+        date: d,
+        remindAt: d,
+    };
+}

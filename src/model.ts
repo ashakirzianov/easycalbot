@@ -39,26 +39,6 @@ export type UserInfo = {
     records: UserRecord[],
 };
 
-export function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
-    const now = new Date(Date.now());
-    const year = relative.year || now.getFullYear();
-    const month = relative.month || now.getMonth();
-    const day = relative.day || now.getDay();
-
-    const date = new Date(year, month, day);
-
-    return date;
-}
-
-export function parsedRecordToRecord(parsed: ParsedRecord): Record {
-    const date = relativeToAbsolute(parsed.date);
-    return {
-        reminder: parsed.reminder,
-        date: date,
-        remindAt: date,
-    };
-}
-
 export type CreateRecordCommand = {
     command: 'create-record',
     record: Record,
