@@ -7,12 +7,26 @@ export type Year = number;
 export type Month = number;
 export type Day = number;
 export type PartialDate = {
+    date: 'partial',
     year?: Year,
     month?: Month,
     day?: Day,
     time?: Time,
 };
-export type RelativeDate = PartialDate;
+export type WeekDayDate = {
+    date: 'weekday',
+    day: number,
+};
+export type TodayDate = { date: 'today' };
+export type TomorrowDate = { date: 'tomorrow' };
+export type InPartialDate = {
+    date: 'in',
+    in: PartialDate,
+};
+export type RelativeDate =
+    | PartialDate | InPartialDate
+    | WeekDayDate | TomorrowDate | TodayDate
+    ;
 export type AbsoluteDate = Date;
 
 export type ParsedRecord = {

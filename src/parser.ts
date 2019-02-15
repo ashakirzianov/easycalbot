@@ -6,7 +6,7 @@ import { mapAndConcat } from './utils';
 import { locales, localeSelector, Locale } from './locale';
 import {
     Month, Year, Day, RelativeDate, ParsedRecord,
-    CreateRecordCommand, BotCommand, AbsoluteDate, Record,
+    CreateRecordCommand, BotCommand, AbsoluteDate, Record, PartialDate,
 } from './model';
 
 // Year
@@ -62,11 +62,12 @@ const tcomma = trimS(prefix(','));
 const tslash = trimS(prefix('/'));
 const tdot = trimS(prefix('.'));
 
-type DateParser = Parser<RelativeDate>;
+type DateParser = Parser<PartialDate>;
 
 export const stringDate: DateParser = translate(
     seq(tmonth, maybe(tday), maybe(tcomma), maybe(tyear)),
     ([m, d, c, y]) => ({
+        date: 'partial' as 'partial',
         month: m,
         day: d,
         year: y,
@@ -81,6 +82,7 @@ const numMonth = translate(
 const americanDate: DateParser = translate(
     seq(trimS(numMonth), tslash, tday, tslash, tyear),
     ([m, s1, d, s2, y]) => ({
+        date: 'partial' as 'partial',
         month: m,
         day: d,
         year: y,
@@ -90,6 +92,7 @@ const americanDate: DateParser = translate(
 const euroDate: DateParser = translate(
     seq(tday, tdot, trimS(numMonth), tdot, tyear),
     ([d, d1, m, d2, y]) => ({
+        date: 'partial' as 'partial',
         day: d,
         month: m,
         year: y,
@@ -123,13 +126,22 @@ export const createRecord: Parser<CreateRecordCommand> = translate(
 
 export const commandParser: Parser<BotCommand> = createRecord;
 
-function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
+function partialToAbsolute(partial: PartialDate): AbsoluteDate {
     const now = new Date(Date.now());
-    const y = relative.year || now.getFullYear();
-    const m = relative.month || now.getMonth();
-    const d = relative.day || now.getDay();
+    const y = partial.year || now.getFullYear();
+    const m = partial.month || now.getMonth();
+    const d = partial.day || now.getDay();
 
     return new Date(y, m, d);
+}
+
+function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
+    switch (relative.date) {
+        case 'partial':
+            return partialToAbsolute(relative);
+        default:
+            throw new Error('Unsupported date');
+    }
 }
 
 function parsedRecordToRecord(parsed: ParsedRecord): Record {
