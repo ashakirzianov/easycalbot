@@ -44,7 +44,7 @@ const tmonth = trimS(month);
 // Day
 
 const dayDec = iff(decimal, d => d > 0 && d <= 31);
-const day: Parser<Day> = dayDec;
+export const day: Parser<Day> = dayDec;
 const tday = trimS(day);
 
 // Date formats
@@ -55,7 +55,7 @@ const tdot = trimS(prefix('.'));
 
 type DateParser = Parser<RelativeDate>;
 
-const stringDate: DateParser = translate(
+export const stringDate: DateParser = translate(
     seq(tmonth, maybe(tday), maybe(tcomma), maybe(tyear)),
     ([m, d, c, y]) => ({
         month: m,
@@ -91,7 +91,7 @@ const date: DateParser = choice(euroDate, americanDate, stringDate);
 
 // Record
 
-const separator = trim(prefixes('-', '--', '—', ':'));
+const separator = trim(prefixes('--', '—', '-', ':'));
 const message = anything;
 
 export const record: Parser<ParsedRecord> = translate(

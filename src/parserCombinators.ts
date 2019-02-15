@@ -198,7 +198,7 @@ export function prefix(pref: string): Parser<string> {
 }
 
 export function regex(re: RegExp): Parser<string> {
-    const actualRe = new RegExp('^' + re, 'i');
+    const actualRe = new RegExp('^' + re.source, 'i');
     return input => {
         const match = input.match(actualRe);
 

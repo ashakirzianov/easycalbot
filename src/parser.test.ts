@@ -1,14 +1,21 @@
 import { Success, Parser } from './parserCombinators';
 import * as parsers from './parser';
+import { parseExpectSuccess } from './test-utils';
 
-function parseExpectSuccess<T>(parser: Parser<T>, input: string): Success<T> {
-    const result = parser(input);
-    if (!result.success) {
-        throw new Error(`Couldn't parser: ${input} with ${parser.name}`);
-    }
+it('Parse day correctly', () => {
+    const result = parseExpectSuccess(parsers.day, '14');
+    expect(result.value).toBe(14);
+});
 
-    return result;
-}
+it('Parse string date correctly', () => {
+    const result = parseExpectSuccess(parsers.stringDate, 'Dec 14, 1989');
+    expect(result.next).toBe('');
+    const value = result.value;
+    expect(value.day).toBe(14);
+    expect(value.month).toBe(11);
+    expect(value.year).toBe(1989);
+});
+
 it('Parse string record correctly', () => {
     const result = parseExpectSuccess(parsers.record, 'Dec 14, 2019 -- I\'m 30!').value;
     expect(result.date.year).toBe(2019);
