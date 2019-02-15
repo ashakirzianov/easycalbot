@@ -7,8 +7,14 @@ import { locales, localeSelector, Locale } from './locale';
 import { Month, Year, Day, RelativeDate, ParsedRecord, CreateRecordCommand, parsedRecordToRecord, BotCommand } from './model';
 
 // Year
-const yearDec = decimal;
-const yearWithApostrophe = projectLast(seq(prefix('\''), decimal));
+const yearDec = translate(
+    decimal,
+    y => y < 100 ? y + 2000 : y,
+);
+const yearWithApostrophe = translate(
+    seq(prefix('\''), decimal),
+    ([_, y]) => 2000 + y,
+);
 
 const year: Parser<Year> = choice(yearDec, yearWithApostrophe);
 const tyear = trimS(year);
