@@ -15,6 +15,7 @@ export function addRecord(user: UserInfo, record: Record): [UserInfo, UserRecord
     };
 
     return [{
+        id: user.id,
         records: user.records.concat(userRecord),
     },
         userRecord,

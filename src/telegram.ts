@@ -1,9 +1,9 @@
-import { Telegraf, Composer } from 'telegraf';
+import Telegraf, { Composer } from 'telegraf';
 import { execute } from './bot';
 
 const reply = Composer.reply;
 
-const testToken = '';
+const testToken = 'test-token';
 const bot = new Telegraf(process.env.BOT_TOKEN || testToken);
 
 const welcome = `
@@ -20,4 +20,6 @@ bot.on('text', ctx => {
     }
 });
 
-(bot as any).launch(); // TODO: why no 'launch' in bot type ?
+export function launch() {
+    (bot as any).launch(); // TODO: why no 'launch' in bot type ?
+}

@@ -2,6 +2,7 @@ import { UserInfo } from './model';
 import { parseAndExec } from './execute';
 
 const user: UserInfo = {
+    id: 0,
     records: [],
 };
 

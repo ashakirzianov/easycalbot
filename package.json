@@ -4,6 +4,7 @@
   "description": "Calendar bot for telegram",
   "main": "index.js",
   "scripts": {
+    "start": "node ./dist/index.js",
     "build": "tsc",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "test": "jest --watch --config jest.config.json"
