@@ -56,13 +56,18 @@ export type UserInfo = {
 
 export type CreateRecordCommand = {
     command: 'create-record',
-    record: Record,
+    record: ParsedRecord,
 };
 export type CannotParseCommand = {
     command: 'cant-parse',
     text: string,
 };
 export type BotCommand = CreateRecordCommand | CannotParseCommand;
+
+export type CommandContext = {
+    user: UserInfo,
+    now: Date,
+};
 
 export type ExecuteResult = {
     reply: string,

@@ -169,52 +169,8 @@ export const createRecord: Parser<CreateRecordCommand> = translate(
     record,
     r => ({
         command: 'create-record' as 'create-record',
-        record: parsedRecordToRecord(r),
+        record: r,
     }),
 );
 
 export const commandParser: Parser<BotCommand> = createRecord;
-
-function partialToAbsolute(partial: PartialDate, now: Date): AbsoluteDate {
-    const y = partial.year || now.getFullYear();
-    const m = partial.month || now.getMonth();
-    const d = partial.day || now.getDate();
-
-    return new Date(y, m, d);
-}
-
-function inNDays(n: number, now: Date): Date {
-    return new Date(now.getDate() + n);
-}
-
-function nextWeekday(w: Weekday, now: Date): Date {
-    const currentWeekday = now.getDay();
-    let days = currentWeekday - w;
-    days = days <= 0 ? days + 7 : days;
-    return inNDays(days, now);
-}
-
-function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
-    const now = new Date(Date.now());
-    switch (relative.date) {
-        case 'partial':
-            return partialToAbsolute(relative, now);
-        case 'today':
-            return now;
-        case 'tomorrow':
-            return inNDays(1, now);
-        case 'weekday':
-            return nextWeekday(relative.day, now);
-        default:
-            throw new Error('Unsupported date');
-    }
-}
-
-function parsedRecordToRecord(parsed: ParsedRecord): Record {
-    const d = relativeToAbsolute(parsed.date);
-    return {
-        reminder: parsed.reminder,
-        date: d,
-        remindAt: d,
-    };
-}

@@ -1,6 +1,7 @@
 import { months, Locale } from './locale';
-import { Month, BotCommand, Record, UserInfo, ExecuteResult, UserRecordId, UserRecord } from './model';
+import { Month, BotCommand, Record, UserInfo, ExecuteResult, UserRecordId, UserRecord, CommandContext } from './model';
 import { commandParser } from './parser';
+import { parsedRecordToRecord } from './dateConvertion';
 
 export function nextId(user: UserInfo): UserRecordId {
     const maxId = user.records
@@ -40,30 +41,30 @@ export function parseCommand(text: string): BotCommand {
         };
 }
 
-export function executeCommand(cmd: BotCommand, user: UserInfo): ExecuteResult {
+export function executeCommand(cmd: BotCommand, ctx: CommandContext): ExecuteResult {
     switch (cmd.command) {
         case 'create-record':
-            const [newUser, record] = addRecord(user, cmd.record);
+            const [newUser, record] = addRecord(ctx.user, parsedRecordToRecord(cmd.record, ctx.now));
             return {
                 user: newUser,
-                reply: `#${record.id}:\n${recordToString(record.record)}`,
+                reply: userRecordToString(record),
             };
         case 'cant-parse':
         default:
             return {
-                user: user,
+                user: ctx.user,
                 reply: "I didn't get it",
             };
     }
 }
 
-export function parseAndExec(input: string, user: UserInfo): ExecuteResult {
+export function parseAndExec(input: string, ctx: CommandContext): ExecuteResult {
     const command = parseCommand(input);
-    const result = executeCommand(command, user);
+    const result = executeCommand(command, ctx);
 
     return result;
 }
 
-export function recordToString(record: Record): string {
-    return `${record.date.toDateString()} - ${record.reminder}`;
+function userRecordToString(record: UserRecord): string {
+    return `#${record.id} ${record.record.date.toDateString()}:\n${record.record.reminder}`;
 }

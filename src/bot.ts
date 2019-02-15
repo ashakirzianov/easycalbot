@@ -3,7 +3,9 @@ import { parseAndExec } from './execute';
 
 export function execute(message: string, id: number): string {
     const user = getOrCreateUser(id);
-    const result = parseAndExec(message, user);
+    const now = new Date(Date.now());
+    const ctx = { user, now };
+    const result = parseAndExec(message, ctx);
     updateUser(result.user);
 
     return result.reply;
