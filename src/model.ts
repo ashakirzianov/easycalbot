@@ -9,20 +9,21 @@ export type Year = number;
 export type Month = number;
 export type Day = number;
 export type Weekday = number;
-export type PartialDate = {
-    date: 'partial',
+export type PartialDay = {
     year?: Year,
     month?: Month,
     day?: Day,
+};
+export type PartialTime = {
     time?: Time,
 };
-export type WeekDayDate = {
+export type PartialDate = { date: 'partial' } & PartialDay & PartialTime;
+export type WeekDayDate = PartialTime & {
     date: 'weekday',
     day: Weekday,
-    time?: Time,
 };
-export type TodayDate = { date: 'today', time?: Time };
-export type TomorrowDate = { date: 'tomorrow', time?: Time };
+export type TodayDate = { date: 'today' } & PartialTime;
+export type TomorrowDate = { date: 'tomorrow' } & PartialTime;
 export type InPartialDate = {
     date: 'in',
     in: PartialDate,

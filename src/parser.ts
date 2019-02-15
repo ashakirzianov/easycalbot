@@ -150,13 +150,48 @@ const relativeDate: DateParser = choice(
     today, tomorrow, weekday, partialDate,
 );
 
+// Time
+
+const colon = prefix(':');
+const amPm = prefixes('am', 'pm');
+const at = localePrefixes('at');
+const timeHM: Parser<PartialDate> = translate(
+    seq(trimS(decimal), trimS(colon), maybe(trimS(decimal)), maybe(trimS(amPm))),
+    ([h, s, m, a]) => ({
+        date: 'partial' as 'partial',
+        time: {
+            hours: a && a.toLocaleLowerCase() === 'pm' ? h + 12 : h,
+            minutes: m || 0,
+        },
+    }),
+);
+
+const time: Parser<PartialDate> = translate(
+    seq(maybe(trimS(at)), timeHM),
+    ([_, t]) => t,
+);
+
+// Full Date Time
+
+const fullDateTime = translate(
+    seq(relativeDate, time),
+    ([rd, t]) => ({
+        ...rd,
+        time: t.time,
+    }),
+);
+
+const dateTimeParser = choice(
+    fullDateTime, relativeDate, time,
+);
+
 // Record
 
 const separator = trim(prefixes('--', '—', '-', ':'));
 const message = anything;
 
 export const record: Parser<ParsedRecord> = translate(
-    seq(relativeDate, maybe(separator), message),
+    seq(dateTimeParser, maybe(separator), message),
     ([d, s, m]) => ({
         date: d,
         reminder: m,

@@ -24,6 +24,7 @@ export type Locale = {
     minute: string[],
     hour: string[],
     day: string[],
+    at: string[],
 };
 
 const en: Locale = {
@@ -52,6 +53,7 @@ const en: Locale = {
     minute: ['minutes', 'minute'],
     hour: ['hours', 'hour'],
     day: ['day', 'days'],
+    at: ['at'],
 };
 
 export const locales: Locale[] = [

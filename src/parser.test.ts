@@ -51,3 +51,14 @@ it('Parse 2-digits year record correctly', () => {
     expect(partial.day).toBe(14);
     expect(result.reminder).toBe('I\'m 30!');
 });
+
+it('Parse with time', () => {
+    const result = parseExpectSuccess(parsers.record, '12/14/19 at 8:42pm - I\'m 30!').value;
+    const partial = result.date as PartialDate;
+    expect(partial.year).toBe(2019);
+    expect(partial.month).toBe(11);
+    expect(partial.day).toBe(14);
+    expect(partial.time!.hours).toBe(20);
+    expect(partial.time!.minutes).toBe(42);
+    expect(result.reminder).toBe('I\'m 30!');
+});
