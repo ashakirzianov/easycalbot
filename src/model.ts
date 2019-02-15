@@ -1,3 +1,5 @@
+import { Moment } from 'moment';
+
 export type Time = {
     hours: number,
     minutes: number,
@@ -6,14 +8,31 @@ export type Time = {
 export type Year = number;
 export type Month = number;
 export type Day = number;
-export type PartialDate = {
+export type Weekday = number;
+export type PartialDay = {
     year?: Year,
     month?: Month,
     day?: Day,
+};
+export type PartialTime = {
     time?: Time,
 };
-export type RelativeDate = PartialDate;
-export type AbsoluteDate = Date;
+export type PartialDate = { date: 'partial' } & PartialDay & PartialTime;
+export type WeekDayDate = PartialTime & {
+    date: 'weekday',
+    day: Weekday,
+};
+export type TodayDate = { date: 'today' } & PartialTime;
+export type TomorrowDate = { date: 'tomorrow' } & PartialTime;
+export type InPartialDate = {
+    date: 'in',
+    in: PartialDate,
+};
+export type RelativeDate =
+    | PartialDate | InPartialDate
+    | WeekDayDate | TomorrowDate | TodayDate
+    ;
+export type AbsoluteDate = Moment;
 
 export type ParsedRecord = {
     date: RelativeDate,
@@ -39,35 +58,20 @@ export type UserInfo = {
     records: UserRecord[],
 };
 
-export function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
-    const now = new Date(Date.now());
-    const year = relative.year || now.getFullYear();
-    const month = relative.month || now.getMonth();
-    const day = relative.day || now.getDay();
-
-    const date = new Date(year, month, day);
-
-    return date;
-}
-
-export function parsedRecordToRecord(parsed: ParsedRecord): Record {
-    const date = relativeToAbsolute(parsed.date);
-    return {
-        reminder: parsed.reminder,
-        date: date,
-        remindAt: date,
-    };
-}
-
 export type CreateRecordCommand = {
     command: 'create-record',
-    record: Record,
+    record: ParsedRecord,
 };
 export type CannotParseCommand = {
     command: 'cant-parse',
     text: string,
 };
 export type BotCommand = CreateRecordCommand | CannotParseCommand;
+
+export type CommandContext = {
+    user: UserInfo,
+    now: AbsoluteDate,
+};
 
 export type ExecuteResult = {
     reply: string,
