@@ -6,6 +6,7 @@ export type Time = {
 export type Year = number;
 export type Month = number;
 export type Day = number;
+export type Weekday = number;
 export type PartialDate = {
     date: 'partial',
     year?: Year,
@@ -15,7 +16,7 @@ export type PartialDate = {
 };
 export type WeekDayDate = {
     date: 'weekday',
-    day: number,
+    day: Weekday,
 };
 export type TodayDate = { date: 'today' };
 export type TomorrowDate = { date: 'tomorrow' };

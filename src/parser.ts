@@ -6,7 +6,7 @@ import { mapAndConcat } from './utils';
 import { locales, localeSelector, Locale } from './locale';
 import {
     Month, Year, Day, RelativeDate, ParsedRecord,
-    CreateRecordCommand, BotCommand, AbsoluteDate, Record, PartialDate,
+    CreateRecordCommand, BotCommand, AbsoluteDate, Record, PartialDate, Weekday,
 } from './model';
 
 function localePrefixes(key: keyof Locale) {
@@ -117,10 +117,37 @@ const tomorrow: DateParser = translate(
     () => ({ date: 'tomorrow' as 'tomorrow' }),
 );
 
+function weekdayParser(w: Weekday, key: keyof Locale) {
+    return translate(
+        localePrefixes(key),
+        () => w,
+    );
+}
+
+const monday = weekdayParser(0, 'monday');
+const tuesday = weekdayParser(1, 'tuesday');
+const wednesday = weekdayParser(2, 'wednesday');
+const thursday = weekdayParser(3, 'thursday');
+const friday = weekdayParser(4, 'friday');
+const saturday = weekdayParser(5, 'saturday');
+const sunday = weekdayParser(6, 'sunday');
+const weekdayWord = choice(
+    monday, tuesday, wednesday, thursday,
+    friday, saturday, sunday,
+);
+
+const weekday: DateParser = translate(
+    trimS(weekdayWord),
+    w => ({
+        date: 'weekday' as 'weekday',
+        day: w,
+    }),
+);
+
 // Dates
 
 const relativeDate: DateParser = choice(
-    today, tomorrow, partialDate,
+    today, tomorrow, weekday, partialDate,
 );
 
 // Record
@@ -151,9 +178,20 @@ export const commandParser: Parser<BotCommand> = createRecord;
 function partialToAbsolute(partial: PartialDate, now: Date): AbsoluteDate {
     const y = partial.year || now.getFullYear();
     const m = partial.month || now.getMonth();
-    const d = partial.day || now.getDay();
+    const d = partial.day || now.getDate();
 
     return new Date(y, m, d);
+}
+
+function inNDays(n: number, now: Date): Date {
+    return new Date(now.getDate() + n);
+}
+
+function nextWeekday(w: Weekday, now: Date): Date {
+    const currentWeekday = now.getDay();
+    let days = currentWeekday - w;
+    days = days <= 0 ? days + 7 : days;
+    return inNDays(days, now);
 }
 
 function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
@@ -164,7 +202,9 @@ function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
         case 'today':
             return now;
         case 'tomorrow':
-            return new Date(now.getDate() + 1);
+            return inNDays(1, now);
+        case 'weekday':
+            return nextWeekday(relative.day, now);
         default:
             throw new Error('Unsupported date');
     }
