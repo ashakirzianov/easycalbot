@@ -9,6 +9,10 @@ import {
     CreateRecordCommand, BotCommand, AbsoluteDate, Record, PartialDate,
 } from './model';
 
+function localePrefixes(key: keyof Locale) {
+    return prefixes(...mapAndConcat(locales, localeSelector(key)));
+}
+
 // Year
 const yearDec = translate(
     decimal,
@@ -26,7 +30,7 @@ const tyear = trimS(year);
 
 function monthParser(m: Month, key: keyof Locale) {
     return translate(
-        prefixes(...mapAndConcat(locales, localeSelector(key))),
+        localePrefixes(key),
         () => m,
     );
 }
@@ -62,7 +66,7 @@ const tcomma = trimS(prefix(','));
 const tslash = trimS(prefix('/'));
 const tdot = trimS(prefix('.'));
 
-type DateParser = Parser<PartialDate>;
+type DateParser = Parser<RelativeDate>;
 
 export const stringDate: DateParser = translate(
     seq(tmonth, maybe(tday), maybe(tcomma), maybe(tyear)),
@@ -99,7 +103,25 @@ const euroDate: DateParser = translate(
     }),
 );
 
-const date: DateParser = choice(euroDate, americanDate, stringDate);
+const partialDate: DateParser = choice(euroDate, americanDate, stringDate);
+
+// Days
+
+const today: DateParser = translate(
+    trimS(localePrefixes('today')),
+    () => ({ date: 'today' as 'today' }),
+);
+
+const tomorrow: DateParser = translate(
+    trimS(localePrefixes('tomorrow')),
+    () => ({ date: 'tomorrow' as 'tomorrow' }),
+);
+
+// Dates
+
+const relativeDate: DateParser = choice(
+    today, tomorrow, partialDate,
+);
 
 // Record
 
@@ -107,7 +129,7 @@ const separator = trim(prefixes('--', '—', '-', ':'));
 const message = anything;
 
 export const record: Parser<ParsedRecord> = translate(
-    seq(date, maybe(separator), message),
+    seq(relativeDate, maybe(separator), message),
     ([d, s, m]) => ({
         date: d,
         reminder: m,
@@ -126,8 +148,7 @@ export const createRecord: Parser<CreateRecordCommand> = translate(
 
 export const commandParser: Parser<BotCommand> = createRecord;
 
-function partialToAbsolute(partial: PartialDate): AbsoluteDate {
-    const now = new Date(Date.now());
+function partialToAbsolute(partial: PartialDate, now: Date): AbsoluteDate {
     const y = partial.year || now.getFullYear();
     const m = partial.month || now.getMonth();
     const d = partial.day || now.getDay();
@@ -136,9 +157,14 @@ function partialToAbsolute(partial: PartialDate): AbsoluteDate {
 }
 
 function relativeToAbsolute(relative: RelativeDate): AbsoluteDate {
+    const now = new Date(Date.now());
     switch (relative.date) {
         case 'partial':
-            return partialToAbsolute(relative);
+            return partialToAbsolute(relative, now);
+        case 'today':
+            return now;
+        case 'tomorrow':
+            return new Date(now.getDate() + 1);
         default:
             throw new Error('Unsupported date');
     }
