@@ -94,7 +94,7 @@ const date: DateParser = choice(euroDate, americanDate, stringDate);
 const separator = trim(prefixes('-', '--', '—', ':'));
 const message = anything;
 
-const record: Parser<ParsedRecord> = translate(
+export const record: Parser<ParsedRecord> = translate(
     seq(date, maybe(separator), message),
     ([d, s, m]) => ({
         date: d,
@@ -104,7 +104,7 @@ const record: Parser<ParsedRecord> = translate(
 
 // Command
 
-const createRecord: Parser<CreateRecordCommand> = translate(
+export const createRecord: Parser<CreateRecordCommand> = translate(
     record,
     r => ({
         command: 'create-record' as 'create-record',
