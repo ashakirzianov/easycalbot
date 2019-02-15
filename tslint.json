@@ -1,5 +1,10 @@
 {
     "extends": "tslint:latest",
+    "linterOptions": {
+        "exclude": [
+            "dist"
+        ]
+    },
     "rules": {
         "no-object-literal-type-assertion": false,
         "no-unnecessary-initializer": false,
