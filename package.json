@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/ashakirzianov/easycalbot-telegram#readme",
   "dependencies": {
+    "moment": "^2.24.0",
     "telegraf": "^3.27.1"
   },
   "devDependencies": {

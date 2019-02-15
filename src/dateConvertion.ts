@@ -1,6 +1,7 @@
 import {
     PartialDate, AbsoluteDate, Weekday, RelativeDate, ParsedRecord, Record,
 } from './model';
+import moment = require('moment');
 
 function partialToAbsolute(partial: PartialDate, now: Date): AbsoluteDate {
     const y = partial.year || now.getFullYear();
@@ -10,13 +11,13 @@ function partialToAbsolute(partial: PartialDate, now: Date): AbsoluteDate {
     return new Date(y, m, d);
 }
 
-function inNDays(n: number, now: Date): Date {
-    return new Date(now.getDate() + n);
+export function inNDays(n: number, now: Date): Date {
+    return moment(now).add(n, 'd').toDate();
 }
 
-function nextWeekday(w: Weekday, now: Date): Date {
+export function nextWeekday(w: Weekday, now: Date): Date {
     const currentWeekday = now.getDay();
-    let days = currentWeekday - w;
+    let days = w - currentWeekday;
     days = days <= 0 ? days + 7 : days;
     return inNDays(days, now);
 }
