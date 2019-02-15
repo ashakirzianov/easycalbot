@@ -33,7 +33,9 @@ export type UserRecord = {
     record: Record,
 };
 
+export type UserId = number;
 export type UserInfo = {
+    id: UserId,
     records: UserRecord[],
 };
 
@@ -70,4 +72,10 @@ export type BotCommand = CreateRecordCommand | CannotParseCommand;
 export type ExecuteResult = {
     reply: string,
     user: UserInfo,
+};
+
+export type Store = {
+    users: {
+        [id in UserId]?: UserInfo;
+    };
 };
