@@ -1,5 +1,5 @@
 import { UserInfo } from './model';
-import { parseAndExec } from './logic';
+import { parseAndExec } from './execute';
 
 const user: UserInfo = {
     records: [],
